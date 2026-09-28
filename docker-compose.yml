@@ -1,0 +1,23 @@
+# PostgreSQL database for the HR/Payroll Management System.
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Reset:  docker compose down -v   (this also deletes all data)
+
+services:
+  db:
+    image: postgres:17
+    container_name: payroll-db
+    environment:
+      POSTGRES_USER: payroll
+      POSTGRES_PASSWORD: payroll
+      POSTGRES_DB: payroll
+    ports:
+      - "5432:5432"
+    volumes:
+      # Keeps the data outside the container, so it is not lost on restart
+      - payroll-data:/var/lib/postgresql/data
+      # Runs the .sql files in alphabetical order the first time the database is created
+      - ./sql:/docker-entrypoint-initdb.d
+
+volumes:
+  payroll-data:
