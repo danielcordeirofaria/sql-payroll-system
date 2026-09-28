@@ -63,11 +63,7 @@ def monthly_report(pay_month, conn=None):
         return db.execute(sql, (pay_month,)).fetchall()
 
 
-# There is no update function here on purpose. A payroll record is a
-# historical fact: it shows what the employee was paid in that month.
-# Changing gross_pay later would rewrite history. A real correction
-# would be a new adjustment record, not an edit of the old one.
-
+# There is no update function here on purpose.
 
 def delete(payroll_id, conn=None):
     """Removes one payroll record from the database."""
