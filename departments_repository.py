@@ -2,12 +2,18 @@ from database import connection
 
 
 def find_all(conn=None):
+
+    """Returns every department."""
+
     sql = "SELECT id, name FROM departments ORDER BY name"
     with connection(conn) as db:
         return db.execute(sql).fetchall()
 
 
 def create(name, conn=None):
+
+    """Adds a new department and returns its new id."""
+
     sql = """
         INSERT INTO departments (name)
         VALUES (%s)
@@ -18,6 +24,7 @@ def create(name, conn=None):
 
 
 def update_name(department_id, name, conn=None):
+    """Changes the name of one department."""
     sql = """
         UPDATE departments
         SET name = %s
@@ -28,6 +35,9 @@ def update_name(department_id, name, conn=None):
 
 
 def delete(department_id, conn=None):
+
+    """Removes one department from the database."""
+    
     sql = "DELETE FROM departments WHERE id = %s"
     with connection(conn) as db:
         db.execute(sql, (department_id,))
@@ -35,16 +45,7 @@ def delete(department_id, conn=None):
 
 def salary_statistics(conn=None):
     """
-    Shows, for each department, how many employees it has and the
-    total and average base salary of those employees.
-
-    Starting from departments (not employees) and using LEFT JOIN
-    keeps a department with no employees in the result, with 0 and
-    NULL instead of disappearing from the report.
-
-    COUNT(employees.id) counts only real employees. If we used
-    COUNT(*), a department with no employees would be counted as 1,
-    because the LEFT JOIN still produces one "empty" row for it.
+    Returns a list of departments with the number of employees, total salary, and average salary.
     """
     sql = """
         SELECT

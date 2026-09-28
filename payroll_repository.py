@@ -2,6 +2,7 @@ from database import connection
 
 
 def generate_for_month(pay_month, conn=None):
+    """Creates one payroll record for every employee hired before this month."""
     sql = """
         INSERT INTO payroll (employee_id, pay_month, gross_pay)
         SELECT employees.id, %s, positions.base_salary
@@ -14,6 +15,9 @@ def generate_for_month(pay_month, conn=None):
 
 
 def find_by_employee(employee_id, conn=None):
+
+    """Returns all payroll records of one employee."""
+    
     sql = """
         SELECT id, pay_month, gross_pay
         FROM payroll
@@ -66,6 +70,7 @@ def monthly_report(pay_month, conn=None):
 
 
 def delete(payroll_id, conn=None):
+    """Removes one payroll record from the database."""
     sql = "DELETE FROM payroll WHERE id = %s"
     with connection(conn) as db:
         db.execute(sql, (payroll_id,))

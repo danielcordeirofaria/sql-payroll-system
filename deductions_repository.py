@@ -2,6 +2,7 @@ from database import connection
 
 
 def find_by_payroll(payroll_id, conn=None):
+    """Returns all deductions that belong to one payroll record."""
     sql = """
         SELECT id, name, amount
         FROM deductions
@@ -13,6 +14,7 @@ def find_by_payroll(payroll_id, conn=None):
 
 
 def create(payroll_id, name, amount, conn=None):
+    """Adds a new deduction to a payroll record and returns its new id."""
     sql = """
         INSERT INTO deductions (payroll_id, name, amount)
         VALUES (%s, %s, %s)
@@ -23,6 +25,9 @@ def create(payroll_id, name, amount, conn=None):
 
 
 def update_amount(deduction_id, amount, conn=None):
+
+    """Changes the amount of one deduction."""
+
     sql = """
         UPDATE deductions
         SET amount = %s
@@ -33,6 +38,9 @@ def update_amount(deduction_id, amount, conn=None):
 
 
 def delete(deduction_id, conn=None):
+
+    """Removes one deduction from the database."""
+    
     sql = "DELETE FROM deductions WHERE id = %s"
     with connection(conn) as db:
         db.execute(sql, (deduction_id,))

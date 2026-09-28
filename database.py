@@ -12,11 +12,15 @@ DB_CONFIG = {
 
 
 def get_connection():
+    """Opens a new connection to the payroll database."""
     return psycopg.connect(**DB_CONFIG)
 
 
 @contextmanager
 def connection(conn=None):
+    
+    """Gives a connection to use. Reuses one if given, or opens a new one."""
+
     if conn is not None:
         yield conn
     else:

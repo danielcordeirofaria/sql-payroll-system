@@ -2,6 +2,7 @@ from database import connection
 
 
 def find_by_employee(employee_id, conn=None):
+    """Returns all benefits that belong to one employee."""
     sql = """
         SELECT id, name, amount
         FROM benefits
@@ -13,6 +14,7 @@ def find_by_employee(employee_id, conn=None):
 
 
 def create(employee_id, name, amount, conn=None):
+    """Adds a new benefit for an employee and returns its new id."""
     sql = """
         INSERT INTO benefits (employee_id, name, amount)
         VALUES (%s, %s, %s)
@@ -23,6 +25,7 @@ def create(employee_id, name, amount, conn=None):
 
 
 def update_amount(benefit_id, amount, conn=None):
+    """Changes the amount of one benefit."""
     sql = """
         UPDATE benefits
         SET amount = %s
@@ -33,19 +36,14 @@ def update_amount(benefit_id, amount, conn=None):
 
 
 def delete(benefit_id, conn=None):
+    """Removes one benefit from the database."""
     sql = "DELETE FROM benefits WHERE id = %s"
     with connection(conn) as db:
         db.execute(sql, (benefit_id,))
 
 
 def find_employees_without_benefits(conn=None):
-    """
-    Finds employees who have no benefit at all.
-
-    The LEFT JOIN keeps every employee, even the ones with no row in
-    benefits. For those, all benefits columns come back as NULL.
-    WHERE benefits.id IS NULL then keeps only that group.
-    """
+    """Returns a list of employees that do not have any benefits."""
     sql = """
         SELECT employees.name, departments.name AS department
         FROM employees
@@ -61,3 +59,4 @@ def find_employees_without_benefits(conn=None):
 if __name__ == "__main__":
     for employee in find_employees_without_benefits():
         print(employee)
+

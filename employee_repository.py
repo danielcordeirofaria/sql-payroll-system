@@ -2,6 +2,9 @@ from database import connection
 
 
 def find_all(conn=None):
+
+    """Returns every employee, with department name and position title."""
+
     sql = """
         SELECT employees.id,
                employees.name,
@@ -18,6 +21,9 @@ def find_all(conn=None):
 
 
 def create(name, hire_date, department_id, position_id, conn=None):
+
+    """Adds a new employee and returns the new employee id."""
+    
     sql = """
         INSERT INTO employees (name, hire_date, department_id, position_id)
         VALUES (%s, %s, %s, %s)
@@ -28,6 +34,7 @@ def create(name, hire_date, department_id, position_id, conn=None):
 
 
 def update_position(employee_id, position_id, conn=None):
+    """Changes the position of one employee."""
     sql = """
         UPDATE employees
         SET position_id = %s
@@ -38,6 +45,7 @@ def update_position(employee_id, position_id, conn=None):
 
 
 def delete(employee_id, conn=None):
+    """Removes one employee from the database."""
     sql = "DELETE FROM employees WHERE id = %s"
     with connection(conn) as db:
         db.execute(sql, (employee_id,))

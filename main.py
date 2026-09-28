@@ -53,6 +53,9 @@ def run_safely(action):
 # --- Employees -------------------------------------------------------
 
 def list_employees():
+
+    """Prints every employee in a simple table."""
+    
     print("\nID  Name                Hire date   Department               Position")
     for employee in employee_repository.find_all():
         id_, name, hire_date, department, position = employee
@@ -60,6 +63,7 @@ def list_employees():
 
 
 def choose_department():
+    """Shows all departments and asks the user to pick one by id."""
     print("\nDepartments:")
     for department_id, name in departments_repository.find_all():
         print(f"  {department_id}. {name}")
@@ -67,6 +71,7 @@ def choose_department():
 
 
 def choose_position():
+    """Shows all positions and asks the user to pick one by id."""
     print("\nPositions:")
     for position_id, title, base_salary in positions_repository.find_all():
         print(f"  {position_id}. {title} (base salary: {base_salary})")
@@ -74,6 +79,7 @@ def choose_position():
 
 
 def add_employee():
+    """Asks for the new employee data and saves it."""
     name = input("Employee name: ")
     hire_date = input("Hire date (YYYY-MM-DD): ")
     department_id = choose_department()
@@ -87,6 +93,7 @@ def add_employee():
 
 
 def change_employee_position():
+    """Asks for an employee and a new position, then updates it."""
     list_employees()
     employee_id = read_int("\nEmployee id: ")
     position_id = choose_position()
@@ -95,6 +102,7 @@ def change_employee_position():
 
 
 def remove_employee():
+    """Asks for an employee id and removes that employee."""
     list_employees()
     employee_id = read_int("\nEmployee id to remove: ")
     if run_safely(lambda: employee_repository.delete(employee_id)):
@@ -102,6 +110,7 @@ def remove_employee():
 
 
 def employees_menu():
+    """Shows the Employees menu and runs the option the user picks."""
     while True:
         print("\n--- Employees ---")
         print("1. List employees")
@@ -128,6 +137,7 @@ def employees_menu():
 # --- Benefits ----------------------------------------------------------
 
 def list_benefits():
+    """Asks for an employee and prints all of their benefits."""
     list_employees()
     employee_id = read_int("\nEmployee id: ")
     print("\nID  Name                     Amount")
@@ -136,6 +146,7 @@ def list_benefits():
 
 
 def add_benefit():
+    """Asks for a benefit and adds it to an employee."""
     list_employees()
     employee_id = read_int("\nEmployee id: ")
     name = input("Benefit name: ")
@@ -149,6 +160,7 @@ def add_benefit():
 
 
 def update_benefit_amount():
+    """Asks for a benefit id and a new amount, then updates it."""
     benefit_id = read_int("Benefit id: ")
     amount = read_amount("New amount: ")
     if run_safely(lambda: benefits_repository.update_amount(benefit_id, amount)):
@@ -156,12 +168,14 @@ def update_benefit_amount():
 
 
 def remove_benefit():
+    """Asks for a benefit id and removes it."""
     benefit_id = read_int("Benefit id to remove: ")
     if run_safely(lambda: benefits_repository.delete(benefit_id)):
         print("Benefit removed.")
 
 
 def benefits_menu():
+    """Shows the Benefits menu and runs the option the user picks."""
     while True:
         print("\n--- Benefits ---")
         print("1. List benefits of an employee")
@@ -188,12 +202,14 @@ def benefits_menu():
 # --- Payroll -------------------------------------------------------------
 
 def generate_payroll():
+    """Asks for a month and creates payroll records for that month."""
     pay_month = input("Month to generate (YYYY-MM-01): ")
     if run_safely(lambda: payroll_repository.generate_for_month(pay_month)):
         print("Payroll generated.")
 
 
 def list_payroll_by_employee():
+    """Asks for an employee and prints all of their payroll records."""
     list_employees()
     employee_id = read_int("\nEmployee id: ")
     print("\nID  Month       Gross pay")
@@ -202,6 +218,7 @@ def list_payroll_by_employee():
 
 
 def add_deduction():
+    """Asks for a deduction and adds it to a payroll record."""
     payroll_id = read_int("Payroll id: ")
     name = input("Deduction name: ")
     amount = read_amount("Amount: ")
@@ -214,6 +231,7 @@ def add_deduction():
 
 
 def list_deductions():
+    """Asks for a payroll id and prints all of its deductions."""
     payroll_id = read_int("Payroll id: ")
     print("\nID  Name                     Amount")
     for deduction_id, name, amount in deductions_repository.find_by_payroll(payroll_id):
@@ -221,6 +239,7 @@ def list_deductions():
 
 
 def update_deduction_amount():
+    """Asks for a deduction id and a new amount, then updates it."""
     deduction_id = read_int("Deduction id: ")
     amount = read_amount("New amount: ")
     if run_safely(lambda: deductions_repository.update_amount(deduction_id, amount)):
@@ -228,18 +247,21 @@ def update_deduction_amount():
 
 
 def remove_deduction():
+    """Asks for a deduction id and removes it."""
     deduction_id = read_int("Deduction id to remove: ")
     if run_safely(lambda: deductions_repository.delete(deduction_id)):
         print("Deduction removed.")
 
 
 def remove_payroll():
+    """Asks for a payroll id and removes that payroll record."""
     payroll_id = read_int("Payroll id to remove: ")
     if run_safely(lambda: payroll_repository.delete(payroll_id)):
         print("Payroll record removed.")
 
 
 def payroll_menu():
+    """Shows the Payroll menu and runs the option the user picks."""
     while True:
         print("\n--- Payroll ---")
         print("1. Generate payroll for a month")
@@ -275,6 +297,7 @@ def payroll_menu():
 # --- Reports ---------------------------------------------------------
 
 def monthly_payroll_report():
+    """Asks for a month and prints the full payroll report for it."""
     pay_month = input("Month to report (YYYY-MM-01): ")
     print("\nName                Gross pay   Benefits    Deductions  Net pay")
     for row in payroll_repository.monthly_report(pay_month):
@@ -283,12 +306,14 @@ def monthly_payroll_report():
 
 
 def employees_without_benefits_report():
+    """Prints every employee who has no benefit."""
     print("\nName                Department")
     for name, department in benefits_repository.find_employees_without_benefits():
         print(f"{name:<20}{department}")
 
 
 def department_salary_report():
+    """Prints salary totals and averages for each department."""
     print("\nDepartment               Employees   Total salary   Average salary")
     for row in departments_repository.salary_statistics():
         department, employee_count, total_salary, average_salary = row
@@ -298,6 +323,7 @@ def department_salary_report():
 
 
 def reports_menu():
+    """Shows the Reports menu and runs the option the user picks."""
     while True:
         print("\n--- Reports ---")
         print("1. Monthly payroll report")
@@ -321,6 +347,7 @@ def reports_menu():
 # --- Main menu -------------------------------------------------------
 
 def main():
+    """Shows the main menu and runs the program until the user exits."""
     while True:
         print("\n=== HR/Payroll System ===")
         print("1. Employees")
